@@ -105,10 +105,10 @@ It helps you reclaim disk space without fear of losing important data by providi
 
 ## 📸 Screenshots
 
-> ![Dashboard view](image/1.png)
+> ![Dashboard view](image/2.png)
 > *Disk usage breakdown by category*
 
-> ![Trash view](image/2.png)
+> ![Trash view](image/1.png)
 > *Review & restore deleted files*
 
 ---
