@@ -53,10 +53,10 @@ It helps you reclaim disk space without fear of losing important data by providi
 ## ⚙️ Installation
 
 1. **Clone the repository**  
-   ```bash
+   ```
    git clone https://github.com/<your-username>/rm-rf-regret.git
    cd rm-rf-regret
-````
+   ```
 
 2. **Create & activate a virtual environment**
 
@@ -71,7 +71,6 @@ It helps you reclaim disk space without fear of losing important data by providi
    pip install -r requirements.txt
    ```
 
----
 
 ## 🏃 Usage
 
