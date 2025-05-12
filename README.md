@@ -99,7 +99,7 @@ It helps you reclaim disk space without fear of losing important data by providi
 
 ---
 
-## 📸 Screenshots
+## 📸 Output Screenshots
 
 > ![Dashboard view](image/2.png)
 > *Disk usage breakdown by category*
@@ -108,27 +108,3 @@ It helps you reclaim disk space without fear of losing important data by providi
 > *Review & restore deleted files*
 
 ---
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch:
-
-   ```bash
-   git checkout -b feature/YourFeature
-   ```
-3. Commit your changes:
-
-   ```bash
-   git commit -m "Add YourFeature"
-   ```
-4. Push to your branch:
-
-   ```bash
-   git push origin feature/YourFeature
-   ```
-5. Open a Pull Request
-
-Please ensure all new code is covered by unit tests and follows PEP 8.
-
-
