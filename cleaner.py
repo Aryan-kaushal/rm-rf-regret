@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 import sys
-import shutil
+import subprocess
 from pathlib import Path
 from datetime import datetime
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QTreeWidget, QTreeWidgetItem, QMessageBox,
-    QAction, QTabWidget, QSplitter
+    QAction, QTabWidget, QSplitter, QAbstractItemView
 )
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 # Constants
-TRASH_DIR = Path.home() / '.rm_rf_trash'
-TRASH_DIR.mkdir(exist_ok=True)
+HOME = str(Path.home())
+TRASH_DIR = Path(HOME) / '.rm-rf-regret' / 'trash'
+LOG_FILE = Path(HOME) / '.rm-rf-regret' / 'log.txt'
+TRASH_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE.touch(exist_ok=True)
 
 # File categories
 FILE_CATEGORIES = {
@@ -38,31 +41,30 @@ CATEGORY_COLORS = {
 
 # Styles
 DARK_STYLE = '''
-QWidget { background: #121212; color: #e0e0e0; font: 15px Sans; }
-QPushButton { background: #1f1f1f; border: 1px solid #333; border-radius: 4px; padding: 8px; }
-QPushButton:hover { background: #2a2a2a; }
-QTreeWidget { background: #1e1e1e; color: #e0e0e0; alternate-background-color: #252525; }
-QSplitter::handle { background: #333; }
+QWidget { background: #121212; color: #e0e0e0; }
+QPushButton { background: #1f1f1f; border: 1px solid #333; padding: 6px; }
+QTreeWidget { background: #1e1e1e; color: #e0e0e0; }
 QTabBar::tab:selected { background: #3a6ff3; }
 '''
 
 LIGHT_STYLE = '''
-QWidget { background: #fafafa; color: #333; font: 15px Sans; }
-QPushButton { background: #e0e0e0; border: 1px solid #ccc; border-radius: 4px; padding: 8px; }
-QPushButton:hover { background: #dddddd; }
-QTreeWidget { background: #fff; color: #333; alternate-background-color: #f0f0f0; }
-QSplitter::handle { background: #bbb; }
+QWidget { background: #fafafa; color: #333; }
+QPushButton { background: #e0e0e0; border: 1px solid #ccc; padding: 6px; }
+QTreeWidget { background: #fff; color: #333; }
 QTabBar::tab:selected { background: #6c8cd5; }
 '''
 
 HACKER_STYLE = '''
-QWidget { background: #000; color: #0f0; font-family: Courier New; }
-QPushButton { background: #001100; border: 1px solid #0f0; border-radius: 4px; padding: 8px; }
-QPushButton:hover { background: #002200; }
-QTreeWidget { background: #000; color: #0f0; alternate-background-color: #003300; }
-QSplitter::handle { background: #0f0; }
+QWidget { background: #000; color: #0f0; font-family: Courier; font-weight: bold; }
+QPushButton { background: #001100; border: 1px solid #0f0; padding: 6px; font-weight: bold; }
+QTreeWidget { background: #000; color: #0f0; font-weight: bold; }
 QTabBar::tab:selected { background: #0f0; }
 '''
+STYLE_LIST = [DARK_STYLE, LIGHT_STYLE, HACKER_STYLE]
+
+
+def sh(cmd):
+    subprocess.run(cmd, shell=True, check=True)
 
 class DashboardPage(QWidget):
     def __init__(self):
@@ -77,40 +79,36 @@ class DashboardPage(QWidget):
 
     def init_ui(self):
         layout = QVBoxLayout(self)
-        # Top controls
-        ctrl_layout = QHBoxLayout()
+        btn_layout = QHBoxLayout()
         self.btn_delete = QPushButton('Delete Selected')
         self.btn_delete.clicked.connect(self.delete_selected)
-        ctrl_layout.addStretch()
-        ctrl_layout.addWidget(self.btn_delete)
-        layout.addLayout(ctrl_layout)
+        btn_layout.addStretch()
+        btn_layout.addWidget(self.btn_delete)
+        layout.addLayout(btn_layout)
 
-        # Main splitter: left tree and right area
-        main_splitter = QSplitter(QtCore.Qt.Horizontal)
-        # Directory tree on left
+        splitter = QSplitter(QtCore.Qt.Horizontal)
         self.dir_tree = QTreeWidget()
         self.dir_tree.setHeaderHidden(True)
         self.dir_tree.itemClicked.connect(self.on_dir_clicked)
-        main_splitter.addWidget(self.dir_tree)
-        # Right splitter: file list above, chart below
+        splitter.addWidget(self.dir_tree)
+
         right_splitter = QSplitter(QtCore.Qt.Vertical)
-        # File list
         self.file_list = QTreeWidget()
         self.file_list.setHeaderLabels(['Name', 'Size', 'Modified'])
+        self.file_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
         right_splitter.addWidget(self.file_list)
-        # Chart area
-        chart_box = QWidget()
-        chart_layout = QVBoxLayout(chart_box)
-        self.figure = Figure(figsize=(6, 4), tight_layout=True)
+
+        chart_widget = QWidget()
+        chart_layout = QVBoxLayout(chart_widget)
+        self.figure = Figure(figsize=(5,3), tight_layout=True)
         self.canvas = FigureCanvas(self.figure)
         chart_layout.addWidget(self.canvas)
-        right_splitter.addWidget(chart_box)
-        right_splitter.setStretchFactor(0, 3)
-        right_splitter.setStretchFactor(1, 2)
-        main_splitter.addWidget(right_splitter)
-        main_splitter.setStretchFactor(0, 1)
-        main_splitter.setStretchFactor(1, 3)
-        layout.addWidget(main_splitter)
+        right_splitter.addWidget(chart_widget)
+
+        splitter.addWidget(right_splitter)
+        splitter.setStretchFactor(0,1)
+        splitter.setStretchFactor(1,3)
+        layout.addWidget(splitter)
 
     def populate_dirs(self, path, parent):
         try:
@@ -129,8 +127,6 @@ class DashboardPage(QWidget):
     def load_files(self, directory):
         self.file_list.clear()
         names, sizes = [], []
-
-        # gather top-10 files by size
         for f in sorted(directory.iterdir(), key=lambda x: x.stat().st_size, reverse=True)[:10]:
             if f.is_file():
                 size_kb = f.stat().st_size / 1024
@@ -141,35 +137,24 @@ class DashboardPage(QWidget):
                     f"{size_kb:.1f} KB",
                     datetime.fromtimestamp(f.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
                 ])
-                cat = next(
-                    (c for c, exts in FILE_CATEGORIES.items() if f.suffix.lower() in exts),
-                    'Others'
-                )
-                item.setForeground(0, QtGui.QBrush(CATEGORY_COLORS.get(cat)))
+                cat = next((c for c, exts in FILE_CATEGORIES.items() if f.suffix.lower() in exts), 'Others')
+                item.setForeground(0, QtGui.QBrush(CATEGORY_COLORS[cat]))
                 self.file_list.addTopLevelItem(item)
-
-        # redraw chart
         self.figure.clear()
-        if any(sizes):
-            # bar chart
+        if sizes and sum(sizes) > 0:
             ax1 = self.figure.add_subplot(121)
             ax1.barh(range(len(sizes)), sizes)
             ax1.invert_yaxis()
             ax1.set_yticks(range(len(names)))
             ax1.set_yticklabels(names, fontsize=8)
             ax1.set_title('Big Files')
-
-            # pie chart
             ax2 = self.figure.add_subplot(122)
             ax2.pie(sizes, labels=names, autopct='%1.1f%%')
             ax2.set_title('Size Distribution')
         else:
-            # placeholder for empty/no-size data
             ax = self.figure.add_subplot(111)
-            ax.text(0.5, 0.5, 'No files to display',
-                    ha='center', va='center', fontsize=12)
+            ax.text(0.5, 0.5, 'No files to display', ha='center', va='center')
             ax.axis('off')
-
         self.canvas.draw()
 
     def delete_selected(self):
@@ -180,13 +165,14 @@ class DashboardPage(QWidget):
         if QMessageBox.question(self, 'Delete', f'Delete {len(items)} files?') != QMessageBox.Yes:
             return
         for item in items:
-            file_name = item.text(0)
-            fpath = self.current_dir / file_name
-            meta = TRASH_DIR / (fpath.name + '.meta')
-            meta.write_text(str(fpath.parent))
-            shutil.move(str(fpath), str(TRASH_DIR / fpath.name))
+            name = item.text(0)
+            src = self.current_dir / name
+            sh(f'mv "{src}" "{TRASH_DIR}/"')
+            ts = datetime.now().strftime('%F %T')
+            sh(f'echo "{ts} Removed: {src}" >> "{LOG_FILE}"')
+            meta = TRASH_DIR / f"{name}.meta"
+            sh(f'echo "{src.parent}" > "{meta}"')
         self.load_files(self.current_dir)
-
 
 class RecycleBinPage(QWidget):
     def __init__(self):
@@ -206,9 +192,9 @@ class RecycleBinPage(QWidget):
         btn_layout.addWidget(self.btn_delete)
         btn_layout.addWidget(self.btn_refresh)
         layout.addLayout(btn_layout)
-
         self.tbl = QTreeWidget()
         self.tbl.setHeaderLabels(['Name', 'Size', 'Deleted', 'Original'])
+        self.tbl.setSelectionMode(QAbstractItemView.ExtendedSelection)
         layout.addWidget(self.tbl)
         self.load()
 
@@ -219,9 +205,9 @@ class RecycleBinPage(QWidget):
                 deleted = datetime.fromtimestamp(f.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
                 size = f.stat().st_size
                 size_str = f"{size//1024} KB" if size < 1024**2 else f"{size//1024**2} MB"
-                meta = TRASH_DIR / (f.name + '.meta')
-                orig = meta.read_text().strip() if meta.exists() else ''
-                item = QTreeWidgetItem([f.name, size_str, deleted, orig])
+                meta = TRASH_DIR / f"{f.name}.meta"
+                orig_path = meta.read_text().strip() if meta.exists() else str(Path.home())
+                item = QTreeWidgetItem([f.name, size_str, deleted, orig_path])
                 self.tbl.addTopLevelItem(item)
 
     def restore(self):
@@ -230,10 +216,10 @@ class RecycleBinPage(QWidget):
             QMessageBox.information(self, 'Restore', 'No items selected')
             return
         for item in items:
-            fp = TRASH_DIR / item.text(0)
-            meta = TRASH_DIR / (fp.name + '.meta')
+            name = item.text(0)
+            meta = TRASH_DIR / f"{name}.meta"
             dest = Path(meta.read_text().strip()) if meta.exists() else Path.home()
-            shutil.move(str(fp), str(dest / fp.name))
+            sh(f'mv "{TRASH_DIR / name}" "{dest / name}"')
         self.load()
 
     def delete_permanently(self):
@@ -244,46 +230,41 @@ class RecycleBinPage(QWidget):
         if QMessageBox.question(self, 'Delete', f'Permanently delete {len(items)} files?') != QMessageBox.Yes:
             return
         for item in items:
-            fp = TRASH_DIR / item.text(0)
-            fp.unlink(missing_ok=True)
-            meta = TRASH_DIR / (fp.name + '.meta')
-            meta.unlink(missing_ok=True)
+            name = item.text(0)
+            sh(f'rm -f "{TRASH_DIR / name}"')
+            sh(f'rm -f "{TRASH_DIR / name}.meta"')
         self.load()
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('rm-rf-regret')
+        self.theme_index = 0
         toolbar = self.addToolBar('Main')
         toolbar.addAction(QAction('Refresh', self, triggered=self.refresh))
         toolbar.addAction(QAction('Toggle Theme', self, triggered=self.toggle_theme))
-
         tabs = QTabWidget()
         tabs.addTab(DashboardPage(), 'Dashboard')
         tabs.addTab(RecycleBinPage(), 'Recycle Bin')
         self.setCentralWidget(tabs)
-        self.setStyleSheet(DARK_STYLE)
+        self.apply_theme()
+
+    def apply_theme(self):
+        self.setStyleSheet(STYLE_LIST[self.theme_index])
 
     def refresh(self):
-        current = self.centralWidget().currentWidget()
-        if hasattr(current, 'load_files'):
-            current.load_files(current.current_dir)
-        elif hasattr(current, 'load'):
-            current.load()
+        w = self.centralWidget().currentWidget()
+        if hasattr(w, 'load_files'):
+            w.load_files(w.current_dir)
+        else:
+            w.load()
 
     def toggle_theme(self):
-        current = self.styleSheet()
-        if current == DARK_STYLE:
-            self.setStyleSheet(LIGHT_STYLE)
-        elif current == LIGHT_STYLE:
-            self.setStyleSheet(HACKER_STYLE)
-        else:
-            self.setStyleSheet(DARK_STYLE)
-
+        self.theme_index = (self.theme_index + 1) % len(STYLE_LIST)
+        self.apply_theme()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
+    win = MainWindow()
+    win.show()
     sys.exit(app.exec_())
