@@ -1,5 +1,19 @@
 # 🧹 RM-RF-REGRET
 
+[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![PyQt5](https://img.shields.io/badge/PyQt5-5.15+-green.svg)](https://riverbankcomputing.com/software/pyqt)
+[![Matplotlib](https://img.shields.io/badge/Matplotlib-3.5+-orange.svg)](https://matplotlib.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg)](https://github.com/Aryan-kaushal/rm-rf-regret/graphs/commit-activity)
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Aryan-kaushal/rm-rf-regret/main/docs/logo.png" alt="RM-RF-REGRET Logo" width="250"/>
+  <br>
+  <em>Because everyone deserves a second chance after rm -rf</em>
+</div>
+
+---
+
 ---
 
 ## 🚀 Project Overview
@@ -38,6 +52,15 @@ Inspired by the anxiety that comes after running `rm -rf` commands, this tool im
 ---
 
 ## 🖼️ Screenshots
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Aryan-kaushal/rm-rf-regret/main/docs/dashboard.png" alt="Dashboard View" width="45%"/>
+  <img src="https://raw.githubusercontent.com/Aryan-kaushal/rm-rf-regret/main/docs/trash.png" alt="Trash View" width="45%"/>
+  <br>
+  <em>Left: Dashboard view with file analytics | Right: Trash bin with restore options</em>
+</div>
+
+---
 
 ---
 
