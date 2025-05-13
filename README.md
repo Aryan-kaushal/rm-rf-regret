@@ -1,15 +1,4 @@
-# RM-RF-REGRET
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
-[![PyQt5](https://img.shields.io/badge/PyQt5-5.15+-green.svg)](https://riverbankcomputing.com/software/pyqt)
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-3.5+-orange.svg)](https://matplotlib.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg)](https://github.com/Aryan-kaushal/rm-rf-regret/graphs/commit-activity)
-
-<div align="center">
-  <img src="" alt="RM-RF-REGRET Logo" width="250"/>
-  <br>
-  <em>Because everyone deserves a second chance after rm -rf</em>
-</div>
+# 🧹 RM-RF-REGRET
 
 ---
 
@@ -24,65 +13,50 @@ Inspired by the anxiety that comes after running `rm -rf` commands, this tool im
 ## ✨ Key Features
 
 ### 🛡️ Safe File Operations
-- **Reversible Deletions**: Files are moved to a hidden trash directory (`~/.rm-rf-regret/trash`) instead of being permanently deleted
-- **Metadata Preservation**: Original file paths are stored for perfect restoration
-- **Comprehensive Logging**: All operations are logged with timestamps for auditing
+
+* **Reversible Deletions**: Files are moved to a hidden trash directory (`~/.rm-rf-regret/trash`) instead of being permanently deleted
+* **Metadata Preservation**: Original file paths are stored for perfect restoration
+* **Comprehensive Logging**: All operations are logged with timestamps for auditing
 
 ### 📊 Powerful Analytics
-- **Visual File Size Distribution**: Interactive charts show disk usage patterns
-- **Category-Based Analysis**: Files automatically categorized by type (documents, images, videos, etc.)
-- **Large File Detection**: Quickly identify space-hogging files
+
+* **Visual File Size Distribution**: Interactive charts show disk usage patterns
+* **Category-Based Analysis**: Files automatically categorized by type (documents, images, videos, etc.)
+* **Large File Detection**: Quickly identify space-hogging files
 
 ### 🖥️ Intuitive Interface
-- **Dual-Pane Explorer**: Directory tree on left, file list on right
-- **Multi-Selection Support**: Perform operations on multiple files simultaneously
-- **Real-Time Updates**: Interface refreshes automatically after operations
+
+* **Dual-Pane Explorer**: Directory tree on left, file list on right
+* **Multi-Selection Support**: Perform operations on multiple files simultaneously
+* **Real-Time Updates**: Interface refreshes automatically after operations
 
 ### 🎨 Customization
-- **Multiple Themes**: Choose between Dark, Light, and Hacker themes
-- **Responsive Layout**: Adapts to your window size and preferences
 
----
-
-## 🔍 Detailed Features
-
-| Feature | Description |
-|---------|-------------|
-| **File Categories** | Automatically sorts files into Images, Documents, Videos, Audio, Archives, and more |
-| **Size Visualization** | Bar charts and pie graphs show relative sizes of your largest files |
-| **Batch Operations** | Select multiple files for deletion or restoration |
-| **Permission Handling** | Gracefully handles permission errors without crashing |
-| **Date Tracking** | Preserves and displays file modification dates |
-| **Directory Navigation** | Hierarchical tree view for intuitive navigation |
-| **Sorting Options** | Sort files by name, size, or modification date |
-| **Permanent Deletion** | Option to permanently remove files from trash when needed |
+* **Multiple Themes**: Choose between Dark, Light, and Hacker themes
+* **Responsive Layout**: Adapts to your window size and preferences
 
 ---
 
 ## 🖼️ Screenshots
-
-<div align="center">
-  <img src="rm-rf-regret/image/2.png" alt="Dashboard View" width="45%"/>
-  <img src="rm-rf-regret/image/1.png" alt="Trash View" width="45%"/>
-  <br>
-  <em>Left: Dashboard view with file analytics | Right: Trash bin with restore options</em>
-</div>
 
 ---
 
 ## ⚙️ Installation
 
 ### Prerequisites
-- Python 3.8 or higher
-- PyQt5
-- Matplotlib
+
+* Python 3.8 or higher
+* PyQt5
+* Matplotlib
 
 ### Method 1: From PyPI (Recommended)
+
 ```bash
 pip install rm-rf-regret
 ```
 
 ### Method 2: From Source
+
 ```bash
 # Clone the repository
 git clone https://github.com/Aryan-kaushal/rm-rf-regret.git
@@ -101,6 +75,7 @@ pip install -r requirements.txt
 ## 🚀 Usage
 
 ### Graphical Interface
+
 ```bash
 # If installed via pip
 rm-rf-regret
@@ -110,6 +85,7 @@ python prj.py
 ```
 
 ### Command-Line Interface
+
 ```bash
 # Show help
 python cleaner.py --help
@@ -135,13 +111,15 @@ python cleaner.py --analyze
 ## 🧰 Technical Details
 
 ### Architecture
+
 RM-RF-REGRET follows a modular architecture with clear separation of concerns:
 
-- **UI Layer**: PyQt5-based interface with responsive design
-- **Business Logic**: Core file operations and analytics processing
-- **Data Layer**: File system interaction and metadata management
+* **UI Layer**: PyQt5-based interface with responsive design
+* **Business Logic**: Core file operations and analytics processing
+* **Data Layer**: File system interaction and metadata management
 
 ### Directory Structure
+
 ```
 ~/.rm-rf-regret/
 ├── trash/        # Where deleted files are stored
@@ -152,15 +130,17 @@ RM-RF-REGRET follows a modular architecture with clear separation of concerns:
 ```
 
 ### Safeguards
-- Confirmation dialogs prevent accidental deletions
-- Self-healing error handling prevents data loss
-- Background backup of metadata files
+
+* Confirmation dialogs prevent accidental deletions
+* Self-healing error handling prevents data loss
+* Background backup of metadata files
 
 ---
 
 ## 🔄 Workflow Examples
 
 ### Data Clean-Up Workflow
+
 1. Launch RM-RF-REGRET
 2. Navigate to a storage-heavy directory
 3. Use the bar chart to identify large files
@@ -170,6 +150,7 @@ RM-RF-REGRET follows a modular architecture with clear separation of concerns:
 7. Restore files if needed or permanently delete them
 
 ### File Recovery Workflow
+
 1. Go to the "Recycle Bin" tab
 2. Find your accidentally deleted files
 3. Select files to recover
@@ -181,11 +162,13 @@ RM-RF-REGRET follows a modular architecture with clear separation of concerns:
 ## 🛠️ Development
 
 ### Requirements
-- Python 3.8+
-- PyQt5 5.15+
-- Matplotlib 3.5+
+
+* Python 3.8+
+* PyQt5 5.15+
+* Matplotlib 3.5+
 
 ### Setting Up Development Environment
+
 ```bash
 # Clone repository with development branch
 git clone -b develop https://github.com/Aryan-kaushal/rm-rf-regret.git
@@ -203,6 +186,7 @@ pytest
 ```
 
 ### Build from Source
+
 ```bash
 python setup.py build
 ```
@@ -223,17 +207,6 @@ For major changes, please open an issue first to discuss what you would like to 
 
 ---
 
-## 📋 Roadmap
-
-- [ ] Multi-language support
-- [ ] Cloud backup integration
-- [ ] Duplicate file detection
-- [ ] Scheduled cleaning operations
-- [ ] File preview functionality
-- [ ] Custom theme editor
-- [ ] File encryption options
-- [ ] Integration with system trash
-
 ---
 
 ## 📄 License
@@ -244,13 +217,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👏 Acknowledgements
 
-- Inspired by the anxiety of accidental `rm -rf` commands
-- PyQt5 for providing excellent GUI capabilities
-- The open-source community for continuous support and inspiration
+* Inspired by the anxiety of accidental `rm -rf` commands
+* PyQt5 for providing excellent GUI capabilities
+* The open-source community for continuous support and inspiration
 
 ---
-
-<div align="center">
-  <p>⭐ Star this repository if you found it useful! ⭐</p>
-  <p>Created with ❤️ by <a href="https://github.com/Aryan-kaushal">Aryan Kaushal</a></p>
-</div>
