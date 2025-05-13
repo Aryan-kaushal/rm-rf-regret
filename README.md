@@ -62,8 +62,8 @@ Inspired by the anxiety that comes after running `rm -rf` commands, this tool im
 ## 🖼️ Screenshots
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Aryan-kaushal/rm-rf-regret/main/docs/dashboard.png" alt="Dashboard View" width="45%"/>
-  <img src="https://raw.githubusercontent.com/Aryan-kaushal/rm-rf-regret/main/docs/trash.png" alt="Trash View" width="45%"/>
+  <img src="./images/2.png" alt="Dashboard View" width="45%"/>
+  <img src="./images/1.png" alt="Trash View" width="45%"/>
   <br>
   <em>Left: Dashboard view with file analytics | Right: Trash bin with restore options</em>
 </div>
