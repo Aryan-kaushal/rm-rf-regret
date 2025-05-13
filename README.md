@@ -239,7 +239,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<div align="center">
-  <p>⭐ Star this repository if you found it useful! ⭐</p>
-  <p>Created with ❤️ by <a href="https://github.com/Aryan-kaushal">Aryan Kaushal</a></p>
-</div>
+
