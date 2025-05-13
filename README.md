@@ -6,7 +6,7 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg)](https://github.com/Aryan-kaushal/rm-rf-regret/graphs/commit-activity)
 
 <div align="center">
-  <img src="https://github.com/Aryan-kaushal/rm-rf-regret/blob/main/image/logo.png" alt="RM-RF-REGRET Logo" width="250"/>
+  <img src="https://github.com/Aryan-kaushal/rm-rf-regret/blob/main/image/logo.png" alt="RM-RF-REGRET Logo" width="250" style="border-radius:8px;"/>
   <br>
   <em>Because everyone deserves a second chance after rm -rf</em>
 </div>
@@ -62,8 +62,8 @@ Inspired by the anxiety that comes after running `rm -rf` commands, this tool im
 ## 🖼️ Screenshots
 
 <div align="center">
-  <img src="https://github.com/Aryan-kaushal/rm-rf-regret/blob/main/image/2.png" alt="Dashboard View" width="45%"/>
-  <img src="https://github.com/Aryan-kaushal/rm-rf-regret/blob/main/image/1.png" alt="Trash View" width="45%"/>
+  <img src="https://github.com/Aryan-kaushal/rm-rf-regret/blob/main/image/2.png" alt="Dashboard View" width="45%" style="border-radius:8px;"/>
+  <img src="https://github.com/Aryan-kaushal/rm-rf-regret/blob/main/image/1.png" alt="Trash View" width="45%" style="border-radius:8px;"/>
   <br>
   <em>Left: Dashboard view with file analytics | Right: Trash bin with restore options</em>
 </div>
