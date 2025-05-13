@@ -208,35 +208,9 @@ python setup.py build
 ```
 
 ---
-
-## 📝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👏 Acknowledgements
-
-- Inspired by the anxiety of accidental `rm -rf` commands
-- PyQt5 for providing excellent GUI capabilities
-- The open-source community for continuous support and inspiration
-
 ---
 
 
