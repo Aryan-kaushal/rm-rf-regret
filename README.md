@@ -6,7 +6,7 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg)](https://github.com/Aryan-kaushal/rm-rf-regret/graphs/commit-activity)
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Aryan-kaushal/rm-rf-regret/main/docs/logo.png" alt="RM-RF-REGRET Logo" width="250"/>
+  <img src="" alt="RM-RF-REGRET Logo" width="250"/>
   <br>
   <em>Because everyone deserves a second chance after rm -rf</em>
 </div>
