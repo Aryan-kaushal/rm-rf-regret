@@ -64,7 +64,7 @@ QTabBar::tab:selected { background: #0f0; }
 STYLE_LIST = [DARK_STYLE, LIGHT_STYLE, HACKER_STYLE]
 
 def sh(cmd):
-    """Helper: main yahan shell command run karta hoon (Linux command)."""
+    # Helper Function to run Shell Command
     subprocess.run(cmd, shell=True, check=True)
 
 class DashboardPage(QWidget):
@@ -129,12 +129,12 @@ class DashboardPage(QWidget):
             pass
 
     def on_dir_clicked(self, item, _):
-        """Directory click hone par files load karunga"""
+        # To Load Files on Clicking at Directory
         self.current_dir = Path(item.data(0, QtCore.Qt.UserRole))
         self.load_files(self.current_dir)
 
     def load_files(self, directory):
-        """Main yahan top 10 badi files dikhaunga aur chart update karunga"""
+        # To Show top 10 Largest Files and update chart
         self.file_list.clear()
         names, sizes = [], []
         # Sort by size and pick top 10
