@@ -13,13 +13,12 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 # MAIN CONSTANTS SETUP
-HOME = str(Path.home())  # Main yahan apna home directory ka path store karta hoon
-TRASH_DIR = Path(HOME) / '.rm-rf-regret' / 'trash'  # Trash folder banao
-LOG_FILE = Path(HOME) / '.rm-rf-regret' / 'log.txt'  # Action log file
+HOME = str(Path.home())  # Storing Path of Home directory
+TRASH_DIR = Path(HOME) / '.rm-rf-regret' / 'trash'  # Creating Trash Folder
+LOG_FILE = Path(HOME) / '.rm-rf-regret' / 'log.txt'  # Creating  Action log file
 TRASH_DIR.mkdir(parents=True, exist_ok=True)  # Ensure trash folder exists
 LOG_FILE.touch(exist_ok=True)  # Ensure log file exists
 
-# File categories define kar raha hoon
 FILE_CATEGORIES = {
     'Images': ['.jpg', '.png', '.gif'],
     'Documents': ['.pdf', '.txt', '.doc', '.docx'],
@@ -29,7 +28,7 @@ FILE_CATEGORIES = {
     'Junk': ['.tmp', '.log', '~'],
     'Others': []
 }
-# Category colors mapping
+
 CATEGORY_COLORS = {
     'Images': QtGui.QColor('#5a9aff'),
     'Documents': QtGui.QColor('#5aff5a'),
