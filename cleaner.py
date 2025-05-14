@@ -2,7 +2,7 @@
 import sys
 import subprocess
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -12,14 +12,14 @@ from PyQt5.QtWidgets import (
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-# Constants
-HOME = str(Path.home())
-TRASH_DIR = Path(HOME) / '.rm-rf-regret' / 'trash'
-LOG_FILE = Path(HOME) / '.rm-rf-regret' / 'log.txt'
-TRASH_DIR.mkdir(parents=True, exist_ok=True)
-LOG_FILE.touch(exist_ok=True)
+# MAIN CONSTANTS SETUP
+HOME = str(Path.home())  # Main yahan apna home directory ka path store karta hoon
+TRASH_DIR = Path(HOME) / '.rm-rf-regret' / 'trash'  # Trash folder banao
+LOG_FILE = Path(HOME) / '.rm-rf-regret' / 'log.txt'  # Action log file
+TRASH_DIR.mkdir(parents=True, exist_ok=True)  # Ensure trash folder exists
+LOG_FILE.touch(exist_ok=True)  # Ensure log file exists
 
-# File categories
+# File categories define kar raha hoon
 FILE_CATEGORIES = {
     'Images': ['.jpg', '.png', '.gif'],
     'Documents': ['.pdf', '.txt', '.doc', '.docx'],
@@ -29,6 +29,7 @@ FILE_CATEGORIES = {
     'Junk': ['.tmp', '.log', '~'],
     'Others': []
 }
+# Category colors mapping
 CATEGORY_COLORS = {
     'Images': QtGui.QColor('#5a9aff'),
     'Documents': QtGui.QColor('#5aff5a'),
@@ -39,7 +40,7 @@ CATEGORY_COLORS = {
     'Others': QtGui.QColor('#cccccc')
 }
 
-# Styles
+# THEMES STYLES
 DARK_STYLE = '''
 QWidget { background: #121212; color: #e0e0e0; }
 QPushButton { background: #1f1f1f; border: 1px solid #333; padding: 6px; }
@@ -60,17 +61,20 @@ QPushButton { background: #001100; border: 1px solid #0f0; padding: 6px; font-we
 QTreeWidget { background: #000; color: #0f0; font-weight: bold; }
 QTabBar::tab:selected { background: #0f0; }
 '''
+
 STYLE_LIST = [DARK_STYLE, LIGHT_STYLE, HACKER_STYLE]
 
-
 def sh(cmd):
+    """Helper: main yahan shell command run karta hoon (Linux command)."""
     subprocess.run(cmd, shell=True, check=True)
 
 class DashboardPage(QWidget):
     def __init__(self):
         super().__init__()
+        # Main start directory set kar raha hoon
         self.current_dir = Path.home()
-        self.init_ui()
+        self.init_ui()  # UI initialize kar raha hoon
+        # Directory tree populate kar rha hoon
         self.populate_dirs(self.current_dir, self.dir_tree.invisibleRootItem())
         root = self.dir_tree.topLevelItem(0)
         if root:
@@ -78,26 +82,31 @@ class DashboardPage(QWidget):
             self.load_files(self.current_dir)
 
     def init_ui(self):
+        """Main UI components yahan set kar raha hoon"""
         layout = QVBoxLayout(self)
         btn_layout = QHBoxLayout()
         self.btn_delete = QPushButton('Delete Selected')
+        # Button click delete action
         self.btn_delete.clicked.connect(self.delete_selected)
         btn_layout.addStretch()
         btn_layout.addWidget(self.btn_delete)
         layout.addLayout(btn_layout)
 
         splitter = QSplitter(QtCore.Qt.Horizontal)
+        # Left pane: directory tree
         self.dir_tree = QTreeWidget()
         self.dir_tree.setHeaderHidden(True)
         self.dir_tree.itemClicked.connect(self.on_dir_clicked)
         splitter.addWidget(self.dir_tree)
 
+        # Right pane: file list + chart
         right_splitter = QSplitter(QtCore.Qt.Vertical)
         self.file_list = QTreeWidget()
         self.file_list.setHeaderLabels(['Name', 'Size', 'Modified'])
         self.file_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
         right_splitter.addWidget(self.file_list)
 
+        # Chart widget
         chart_widget = QWidget()
         chart_layout = QVBoxLayout(chart_widget)
         self.figure = Figure(figsize=(5,3), tight_layout=True)
@@ -111,6 +120,7 @@ class DashboardPage(QWidget):
         layout.addWidget(splitter)
 
     def populate_dirs(self, path, parent):
+        """Recursive directory load: Main yahan directories tree mein add kr rha hoon"""
         try:
             for p in sorted(path.iterdir()):
                 if p.is_dir():
@@ -118,15 +128,19 @@ class DashboardPage(QWidget):
                     item.setData(0, QtCore.Qt.UserRole, str(p))
                     self.populate_dirs(p, item)
         except PermissionError:
+            # Kuch folders pe permission nahi hoti, skip kr rha hoon
             pass
 
     def on_dir_clicked(self, item, _):
+        """Directory click hone par files load karunga"""
         self.current_dir = Path(item.data(0, QtCore.Qt.UserRole))
         self.load_files(self.current_dir)
 
     def load_files(self, directory):
+        """Main yahan top 10 badi files dikhaunga aur chart update karunga"""
         self.file_list.clear()
         names, sizes = [], []
+        # Sort by size and pick top 10
         for f in sorted(directory.iterdir(), key=lambda x: x.stat().st_size, reverse=True)[:10]:
             if f.is_file():
                 size_kb = f.stat().st_size / 1024
@@ -137,9 +151,11 @@ class DashboardPage(QWidget):
                     f"{size_kb:.1f} KB",
                     datetime.fromtimestamp(f.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
                 ])
+                # Category color apply
                 cat = next((c for c, exts in FILE_CATEGORIES.items() if f.suffix.lower() in exts), 'Others')
                 item.setForeground(0, QtGui.QBrush(CATEGORY_COLORS[cat]))
                 self.file_list.addTopLevelItem(item)
+        # Chart draw karte hain
         self.figure.clear()
         if sizes and sum(sizes) > 0:
             ax1 = self.figure.add_subplot(121)
@@ -155,9 +171,10 @@ class DashboardPage(QWidget):
             ax = self.figure.add_subplot(111)
             ax.text(0.5, 0.5, 'No files to display', ha='center', va='center')
             ax.axis('off')
-        self.canvas.draw()
+        self.canvas.draw()  # Canvas update
 
     def delete_selected(self):
+        """Main selected files trash mein move karunga aur log update karunga"""
         items = self.file_list.selectedItems()
         if not items:
             QMessageBox.information(self, 'Delete', 'No files selected')
@@ -167,11 +184,14 @@ class DashboardPage(QWidget):
         for item in items:
             name = item.text(0)
             src = self.current_dir / name
-            sh(f'mv "{src}" "{TRASH_DIR}/"')
+            # Linux cmd: mv source to trash
+            sh(f'mv "{src}" "{TRASH_DIR}/"')  # Linux command
             ts = datetime.now().strftime('%F %T')
-            sh(f'echo "{ts} Removed: {src}" >> "{LOG_FILE}"')
+            # Linux cmd: echo log entry
+            sh(f'echo "{ts} Removed: {src}" >> "{LOG_FILE}"')  # Linux command
             meta = TRASH_DIR / f"{name}.meta"
-            sh(f'echo "{src.parent}" > "{meta}"')
+            # Linux cmd: echo original path store karne ke liye
+            sh(f'echo "{src.parent}" > "{meta}"')  # Linux command
         self.load_files(self.current_dir)
 
 class RecycleBinPage(QWidget):
@@ -180,6 +200,7 @@ class RecycleBinPage(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        """Main recycle bin UI set kar raha hoon"""
         layout = QVBoxLayout(self)
         btn_layout = QHBoxLayout()
         self.btn_restore = QPushButton('Restore Selected')
@@ -199,6 +220,7 @@ class RecycleBinPage(QWidget):
         self.load()
 
     def load(self):
+        """Yahan main recycle bin files load karunga"""
         self.tbl.clear()
         for f in sorted(TRASH_DIR.iterdir()):
             if f.is_file() and not f.name.endswith('.meta'):
@@ -211,6 +233,7 @@ class RecycleBinPage(QWidget):
                 self.tbl.addTopLevelItem(item)
 
     def restore(self):
+        """Main selected items original location pe restore karunga"""
         items = self.tbl.selectedItems()
         if not items:
             QMessageBox.information(self, 'Restore', 'No items selected')
@@ -219,10 +242,12 @@ class RecycleBinPage(QWidget):
             name = item.text(0)
             meta = TRASH_DIR / f"{name}.meta"
             dest = Path(meta.read_text().strip()) if meta.exists() else Path.home()
-            sh(f'mv "{TRASH_DIR / name}" "{dest / name}"')
+            # Linux cmd: mv restore
+            sh(f'mv "{TRASH_DIR / name}" "{dest / name}"')  # Linux command
         self.load()
 
     def delete_permanently(self):
+        """Main selected items permanently delete karunga"""
         items = self.tbl.selectedItems()
         if not items:
             QMessageBox.information(self, 'Delete', 'No items selected')
@@ -231,28 +256,39 @@ class RecycleBinPage(QWidget):
             return
         for item in items:
             name = item.text(0)
-            sh(f'rm -f "{TRASH_DIR / name}"')
-            sh(f'rm -f "{TRASH_DIR / name}.meta"')
+            # Linux cmd: rm permanently delete file
+            sh(f'rm -f "{TRASH_DIR / name}"')  # Linux command
+            sh(f'rm -f "{TRASH_DIR / name}.meta"')  # Linux command
         self.load()
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('rm-rf-regret')
+        self.setWindowTitle('rm-rf-regret')  # App title set kar diya
         self.theme_index = 0
+
         toolbar = self.addToolBar('Main')
         toolbar.addAction(QAction('Refresh', self, triggered=self.refresh))
         toolbar.addAction(QAction('Toggle Theme', self, triggered=self.toggle_theme))
+
         tabs = QTabWidget()
         tabs.addTab(DashboardPage(), 'Dashboard')
         tabs.addTab(RecycleBinPage(), 'Recycle Bin')
         self.setCentralWidget(tabs)
-        self.apply_theme()
+        self.apply_theme()  # Initial theme apply karta hoon
+
+        # Auto cleanup setup: purane 30+ dino wale files auto-purge honge
+        self.cleanup_timer = QtCore.QTimer(self)
+        QtCore.QTimer.singleShot(0, self.purge_old_files)
+        self.cleanup_timer.timeout.connect(self.purge_old_files)
+        self.cleanup_timer.start(24 * 60 * 60 * 1000)  # 24 ghante
 
     def apply_theme(self):
+        """Current theme apply kar deta hoon"""
         self.setStyleSheet(STYLE_LIST[self.theme_index])
 
     def refresh(self):
+        """Current tab refresh karunga"""
         w = self.centralWidget().currentWidget()
         if hasattr(w, 'load_files'):
             w.load_files(w.current_dir)
@@ -260,8 +296,25 @@ class MainWindow(QMainWindow):
             w.load()
 
     def toggle_theme(self):
+        """Different themes ke beech toggle karunga"""
         self.theme_index = (self.theme_index + 1) % len(STYLE_LIST)
         self.apply_theme()
+
+    def purge_old_files(self):
+        """Main 30 din se purane trash files auto-purge karunga"""
+        cutoff = datetime.now() - timedelta(days=30)
+        for f in TRASH_DIR.iterdir():
+            if f.is_file() and not f.name.endswith('.meta'):
+                if datetime.fromtimestamp(f.stat().st_mtime) < cutoff:
+                    try:
+                        f.unlink()  # Python se file delete
+                        meta = TRASH_DIR / f"{f.name}.meta"
+                        if meta.exists():
+                            meta.unlink()
+                        with LOG_FILE.open('a') as log:
+                            log.write(f"{datetime.now():%F %T} Auto-purged: {f.name}\n")
+                    except Exception as e:
+                        print(f"Cleanup error for {f}: {e}")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
