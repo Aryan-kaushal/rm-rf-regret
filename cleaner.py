@@ -71,10 +71,8 @@ def sh(cmd):
 class DashboardPage(QWidget):
     def __init__(self):
         super().__init__()
-        # Main start directory set kar raha hoon
         self.current_dir = Path.home()
-        self.init_ui()  # UI initialize kar raha hoon
-        # Directory tree populate kar rha hoon
+        self.init_ui()  
         self.populate_dirs(self.current_dir, self.dir_tree.invisibleRootItem())
         root = self.dir_tree.topLevelItem(0)
         if root:
@@ -120,7 +118,7 @@ class DashboardPage(QWidget):
         layout.addWidget(splitter)
 
     def populate_dirs(self, path, parent):
-        """Recursive directory load: Main yahan directories tree mein add kr rha hoon"""
+        # Recursive directory load: Adding directories in tree
         try:
             for p in sorted(path.iterdir()):
                 if p.is_dir():
@@ -128,7 +126,7 @@ class DashboardPage(QWidget):
                     item.setData(0, QtCore.Qt.UserRole, str(p))
                     self.populate_dirs(p, item)
         except PermissionError:
-            # Kuch folders pe permission nahi hoti, skip kr rha hoon
+            # Skipping Folder without permission
             pass
 
     def on_dir_clicked(self, item, _):
@@ -155,7 +153,7 @@ class DashboardPage(QWidget):
                 cat = next((c for c, exts in FILE_CATEGORIES.items() if f.suffix.lower() in exts), 'Others')
                 item.setForeground(0, QtGui.QBrush(CATEGORY_COLORS[cat]))
                 self.file_list.addTopLevelItem(item)
-        # Chart draw karte hain
+        # Creating Chart
         self.figure.clear()
         if sizes and sum(sizes) > 0:
             ax1 = self.figure.add_subplot(121)
@@ -190,7 +188,7 @@ class DashboardPage(QWidget):
             # Linux cmd: echo log entry
             sh(f'echo "{ts} Removed: {src}" >> "{LOG_FILE}"')  # Linux command
             meta = TRASH_DIR / f"{name}.meta"
-            # Linux cmd: echo original path store karne ke liye
+            # Linux cmd: echo to store original path
             sh(f'echo "{src.parent}" > "{meta}"')  # Linux command
         self.load_files(self.current_dir)
 
@@ -277,18 +275,18 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(tabs)
         self.apply_theme()  # Initial theme apply karta hoon
 
-        # Auto cleanup setup: purane 30+ dino wale files auto-purge honge
+        # Auto cleanup setup: To auto=purge files older than 30+ days
         self.cleanup_timer = QtCore.QTimer(self)
         QtCore.QTimer.singleShot(0, self.purge_old_files)
         self.cleanup_timer.timeout.connect(self.purge_old_files)
-        self.cleanup_timer.start(24 * 60 * 60 * 1000)  # 24 ghante
+        self.cleanup_timer.start(24 * 60 * 60 * 1000)  # 24 hours
 
     def apply_theme(self):
-        """Current theme apply kar deta hoon"""
+        # To apply Current Theme
         self.setStyleSheet(STYLE_LIST[self.theme_index])
 
     def refresh(self):
-        """Current tab refresh karunga"""
+        # To refresh Current tab
         w = self.centralWidget().currentWidget()
         if hasattr(w, 'load_files'):
             w.load_files(w.current_dir)
@@ -296,7 +294,7 @@ class MainWindow(QMainWindow):
             w.load()
 
     def toggle_theme(self):
-        """Different themes ke beech toggle karunga"""
+        # To toggle between different Themes
         self.theme_index = (self.theme_index + 1) % len(STYLE_LIST)
         self.apply_theme()
 
@@ -307,7 +305,7 @@ class MainWindow(QMainWindow):
             if f.is_file() and not f.name.endswith('.meta'):
                 if datetime.fromtimestamp(f.stat().st_mtime) < cutoff:
                     try:
-                        f.unlink()  # Python se file delete
+                        f.unlink()  # file delete
                         meta = TRASH_DIR / f"{f.name}.meta"
                         if meta.exists():
                             meta.unlink()
