@@ -274,7 +274,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(tabs)
         self.apply_theme()  # Initial theme apply karta hoon
 
-        # Auto cleanup setup: To auto=purge files older than 30+ days
+        # Auto cleanup setup: To auto-purge files older than 30+ days
         self.cleanup_timer = QtCore.QTimer(self)
         QtCore.QTimer.singleShot(0, self.purge_old_files)
         self.cleanup_timer.timeout.connect(self.purge_old_files)
@@ -298,7 +298,7 @@ class MainWindow(QMainWindow):
         self.apply_theme()
 
     def purge_old_files(self):
-        """Main 30 din se purane trash files auto-purge karunga"""
+        # To auto-purge files older than 30+ days
         cutoff = datetime.now() - timedelta(days=30)
         for f in TRASH_DIR.iterdir():
             if f.is_file() and not f.name.endswith('.meta'):
